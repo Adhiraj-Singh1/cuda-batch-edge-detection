@@ -33,12 +33,15 @@ functions and used by both the GPU kernels and a single-threaded CPU reference.
 With `--verify`, every GPU output is compared pixel by pixel with the CPU
 result, and the log shows the maximum difference for each image.
 
-**Results.** On the lab GPU, all 256 images were processed and verified against
-the CPU (see `logs/summary.md`). The summary reports:
+**Results.** I ran the project on a Google Colab Tesla T4 GPU. All 256
+images were processed, and all 256 matched the CPU reference exactly (maximum
+pixel difference 0). Full details are in `logs/run_log.txt` and
+`logs/summary.md`.
 
-- [FILL IN: copy the "Sum of per-image GPU time" value from logs/summary.md] of GPU time for the whole batch
-- [FILL IN: copy the "GPU speedup vs. 1 CPU core" value from logs/summary.md] speedup over one CPU core
-- [FILL IN: copy the "Throughput (wall clock)" value from logs/summary.md] end-to-end throughput
+- **33.5 ms** of GPU time for the whole batch (copies + 4 kernels per image),
+  compared with **1784.0 ms** for the single-threaded CPU reference: a
+  **53.2x speedup**
+- **4.2 MP/s** end-to-end throughput, including reading and writing PNG files
 
 **Challenges and lessons learned.**
 
@@ -50,11 +53,11 @@ the CPU (see `logs/summary.md`). The summary reports:
   verification can be exact.
 - **GPU time vs. total time.** The log reports both the wall-clock time
   (which includes decoding and encoding PNGs on the CPU) and the sum of the
-  per-image GPU times. In my run these were [FILL IN: copy the "Wall time" value
-  from logs/summary.md] and [FILL IN: copy the "Sum of per-image GPU time"
-  value]. The difference shows how much of the run is file I/O rather than GPU
-  work. This is why streams matter here: they let the GPU keep working while
-  the CPU is busy with files.
+  per-image GPU times. In my run the whole batch took 7736.3 ms of wall time
+  but only 33.5 ms of GPU time, so less than 1% of the run was GPU work. The
+  real bottleneck is file I/O on the CPU, not the kernels. This is why streams
+  matter here: they let the GPU keep working while the CPU is busy with files.
+  A multi-threaded image loader would be the next speed-up.
 - **Generality.** Supporting mixed image sizes, unreadable files and any
   block-size or stream-count combination meant validating the arguments and
   managing buffer sizes carefully, rather than assuming one fixed image size.
