@@ -34,7 +34,7 @@ Enterprise*.
 
 ## Quick start
 
-On a machine with an NVIDIA GPU and the CUDA toolkit (for example the course lab):
+On a machine with an NVIDIA GPU and the CUDA toolkit:
 
 ```bash
 ./run.sh
@@ -109,7 +109,7 @@ The input images are not committed to the repository because they take about
 
 ## Proof of execution
 
-After running `./run.sh` in the lab, these files are committed to the
+After running `./run.sh`, these files are committed to the
 repository:
 
 * [`logs/run_log.txt`](logs/run_log.txt): the GPU used, then one line for each
